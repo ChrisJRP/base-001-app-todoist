@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 
 //(1)
+// Role. 2 se adhiere el atributo
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -24,6 +26,9 @@ public class Usuario {
     private String email;
     private String password;
     private Date fecha;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
 }
 

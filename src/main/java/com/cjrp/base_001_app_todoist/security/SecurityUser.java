@@ -19,7 +19,8 @@ public class SecurityUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        //return Collections.emptyList();
+        return Collections.singletonList(() -> "ROLE_" + usuario.getRole().name());
     }
 
     @Override

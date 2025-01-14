@@ -5,6 +5,7 @@ package com.cjrp.base_001_app_todoist.service;
 import com.cjrp.base_001_app_todoist.dto.AuthResponse;
 import com.cjrp.base_001_app_todoist.dto.LoginRequest;
 import com.cjrp.base_001_app_todoist.dto.RegisterRequest;
+import com.cjrp.base_001_app_todoist.entity.Role;
 import com.cjrp.base_001_app_todoist.entity.Usuario;
 import com.cjrp.base_001_app_todoist.repository.UsuarioRepository;
 import com.cjrp.base_001_app_todoist.security.SecurityUser;
@@ -18,6 +19,9 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 // (9)
+// Role. 3 actualiza el registro para que adhiera el role
+
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -49,6 +53,7 @@ public class AuthService {
                 .email(registerRequest.getEmail())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .fecha(new Date())
+                .role(Role.USER)
                 .build();
 
         usuarioRepository.save(user); //guarda al usuario

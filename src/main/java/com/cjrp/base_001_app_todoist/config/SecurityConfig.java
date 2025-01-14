@@ -12,6 +12,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 // (8)
+// Role. 4 se colocan los permisos de admin y user
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -28,6 +30,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authRequests ->
                         authRequests
                                 .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/admin/**").hasRole("ADMIN")
+                                .requestMatchers("/api/v1/**").hasRole("USER")
                                 .anyRequest()
                                 .authenticated()
                 )
