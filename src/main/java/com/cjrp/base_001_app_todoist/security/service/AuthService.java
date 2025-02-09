@@ -1,4 +1,4 @@
-package com.cjrp.base_001_app_todoist.service;
+package com.cjrp.base_001_app_todoist.security.service;
 
 
 
@@ -9,7 +9,7 @@ import com.cjrp.base_001_app_todoist.entity.Role;
 import com.cjrp.base_001_app_todoist.entity.Usuario;
 import com.cjrp.base_001_app_todoist.repository.UsuarioRepository;
 import com.cjrp.base_001_app_todoist.security.SecurityUser;
-import com.cjrp.base_001_app_todoist.jwt.JwtService;
+import com.cjrp.base_001_app_todoist.security.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

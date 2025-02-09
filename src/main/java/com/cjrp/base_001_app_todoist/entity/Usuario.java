@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 //(1)
 // Role. 2 se adhiere el atributo
@@ -29,6 +30,10 @@ public class Usuario {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+ /*   @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    List<Proyecto> proyectos;*/
+
 
 }
 

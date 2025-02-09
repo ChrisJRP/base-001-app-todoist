@@ -3,7 +3,7 @@ package com.cjrp.base_001_app_todoist.controller;
 import com.cjrp.base_001_app_todoist.dto.AuthResponse;
 import com.cjrp.base_001_app_todoist.dto.LoginRequest;
 import com.cjrp.base_001_app_todoist.dto.RegisterRequest;
-import com.cjrp.base_001_app_todoist.service.AuthService;
+import com.cjrp.base_001_app_todoist.security.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

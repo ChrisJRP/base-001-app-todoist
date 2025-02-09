@@ -1,4 +1,4 @@
-package com.cjrp.base_001_app_todoist.jwt;
+package com.cjrp.base_001_app_todoist.security.jwt;
 
 
 import io.jsonwebtoken.Jwts;

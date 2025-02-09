@@ -1,6 +1,6 @@
-package com.cjrp.base_001_app_todoist.config;
+package com.cjrp.base_001_app_todoist.security.config;
 
-import com.cjrp.base_001_app_todoist.jwt.JwtAuthenticationFilter;
+import com.cjrp.base_001_app_todoist.security.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +32,7 @@ public class SecurityConfig {
                                 .requestMatchers("/auth/**").permitAll()
                                 .requestMatchers("/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/api/v1/**").hasAnyRole("USER","ADMIN")
+                                .requestMatchers("/api/v2/**").hasRole("ADMIN")
                                 .anyRequest()
                                 .authenticated()
                 )

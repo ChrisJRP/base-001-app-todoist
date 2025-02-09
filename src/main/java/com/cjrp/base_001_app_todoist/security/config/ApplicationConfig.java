@@ -1,4 +1,4 @@
-package com.cjrp.base_001_app_todoist.config;
+package com.cjrp.base_001_app_todoist.security.config;
 
 
 import com.cjrp.base_001_app_todoist.security.UserDetailsServiceImpl;
