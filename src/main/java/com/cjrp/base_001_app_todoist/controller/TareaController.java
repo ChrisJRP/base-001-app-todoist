@@ -12,7 +12,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/tarea")
+//@RequestMapping("/api/v1/tarea")
+@RequestMapping("/api/v1/proyecto/{proyectoId}/tareas")
 public class TareaController {
 
     //omitiendo Autowired
@@ -23,9 +24,9 @@ public class TareaController {
     }
 
     @PostMapping
-    public ResponseEntity<TareaResponseDTO> crearTarea(@RequestBody TareaDTO tareaDTO){
+    public ResponseEntity<TareaResponseDTO> crearTarea(@PathVariable Integer proyectoId, @RequestBody TareaDTO tareaDTO){
 
-        TareaResponseDTO tareaNueva = tareaService.crearTarea(tareaDTO);
+        TareaResponseDTO tareaNueva = tareaService.crearTarea(proyectoId,tareaDTO);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -33,31 +34,34 @@ public class TareaController {
     }
 
 
-    @GetMapping("/{id}")
-    public ResponseEntity<TareaResponseDTO> obtenerTareaPorId(@PathVariable Integer id){
+    @GetMapping("/id/{tareaId}")
+    public ResponseEntity<TareaResponseDTO> obtenerTareaPorId(@PathVariable Integer proyectoId, @PathVariable Integer tareaId){
         //validarId(id);
-        TareaResponseDTO tareaEncontrada = tareaService.getTareaById(id);
+        //TareaResponseDTO tareaEncontrada = tareaService.getTareaById(id);
+        TareaResponseDTO tareaEncontrada = tareaService.getTareaById(proyectoId,tareaId);
         return ResponseEntity.ok(tareaEncontrada);
     }
 
-    @GetMapping("/listatareas/{proyectoId}")
+    @GetMapping
     public ResponseEntity<List<TareaResponseDTO>> listaTareasActivasPorProyectoId(@PathVariable Integer proyectoId){
         //validarId(proyectoId);
         List<TareaResponseDTO> listadoTareasActivas = tareaService.listaTareasEstadoActivo(proyectoId);
         return ResponseEntity.ok(listadoTareasActivas);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<TareaResponseDTO> actualizarTarea(@PathVariable Integer id, @RequestBody TareaDTO tareaDTO){
+    @PutMapping("/id/{tareaId}")
+    public ResponseEntity<TareaResponseDTO> actualizarTarea(@PathVariable Integer proyectoId, @PathVariable Integer tareaId, @RequestBody TareaDTO tareaDTO){
         //validarId(id);
-        TareaResponseDTO tareaActualizada = tareaService.actualizarTarea(id, tareaDTO);
+        //TareaResponseDTO tareaActualizada = tareaService.actualizarTarea(id, tareaDTO);
+        TareaResponseDTO tareaActualizada = tareaService.actualizarTarea(proyectoId, tareaId, tareaDTO);
         return ResponseEntity.ok(tareaActualizada);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarTarea(@PathVariable Integer id){
+    @DeleteMapping("/id/{tareaId}")
+    public ResponseEntity<Void> eliminarTarea(@PathVariable Integer proyectoId, @PathVariable Integer tareaId){
         //validarId(id);
-        tareaService.eliminarTarea(id);
+//        tareaService.eliminarTarea(id);
+        tareaService.eliminarTarea(proyectoId, tareaId);
         return ResponseEntity.noContent().build();
     }
 
@@ -68,6 +72,30 @@ public class TareaController {
         }
     }
 
+
+    //Obtener tarea por numeroTarea Opt1
+    @GetMapping("/{numeroTarea}")
+    public ResponseEntity<TareaResponseDTO> obtenerTareaPorNumeroTarea(@PathVariable Integer proyectoId, @PathVariable Integer numeroTarea){
+        //validarId(id);
+        TareaResponseDTO tareaEncontrada = tareaService.getTareaByNumeroTarea(proyectoId,numeroTarea);
+        return ResponseEntity.ok(tareaEncontrada);
+    }
+
+    //Actualizar tarea por numeroTarea Opt1
+    @PutMapping("/{numeroTarea}")
+    public ResponseEntity<TareaResponseDTO> actualizarTareaPorNumeroTarea(@PathVariable Integer proyectoId, @PathVariable Integer numeroTarea, @RequestBody TareaDTO tareaDTO){
+        //validarId(id);
+        TareaResponseDTO tareaActualizada = tareaService.actualizarTareaPorNumeroTarea(proyectoId, numeroTarea, tareaDTO);
+        return ResponseEntity.ok(tareaActualizada);
+    }
+
+    //Eliminar tarea por numeroTarea Opt1
+    @DeleteMapping("/{numeroTarea}")
+    public ResponseEntity<Void> eliminarTareaPorNumeroTarea(@PathVariable Integer proyectoId, @PathVariable Integer numeroTarea){
+        //validarId(id);
+        tareaService.eliminarTareaPorNumeroTarea(proyectoId, numeroTarea);
+        return ResponseEntity.noContent().build();
+    }
 
 
 

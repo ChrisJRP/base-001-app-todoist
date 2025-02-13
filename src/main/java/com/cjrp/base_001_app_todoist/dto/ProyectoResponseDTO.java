@@ -19,5 +19,7 @@ public class ProyectoResponseDTO {
     private String color;
     private Boolean estado;     //eliminacion
     private Integer usuarioId;  //usuario creador del proyecto. a diferencia del original es Integer
-    private List<TareaResponseDTO> tareas; //Listado de tareas del proyecto
+
+    //Opt_1. Eliminado para pruebas sin lista tareas
+    //private List<TareaResponseDTO> tareas; //Listado de tareas del proyecto
 }

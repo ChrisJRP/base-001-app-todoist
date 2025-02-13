@@ -19,18 +19,45 @@ import java.util.stream.Collectors;
 @Service
 public class TareaServiceImpl implements TareaService {
 
-    @Autowired
-    ProyectoRepository proyectoRepository;
+    private final ProyectoRepository proyectoRepository;
+    private final TareaRepository tareaRepository;
 
-    @Autowired
-    TareaRepository tareaRepository;
+    public TareaServiceImpl(ProyectoRepository proyectoRepository, TareaRepository tareaRepository) {
+        this.proyectoRepository = proyectoRepository;
+        this.tareaRepository = tareaRepository;
+    }
 
     @Override //Crear tarea
-    public TareaResponseDTO crearTarea(TareaDTO tareaDTO) {
+    public TareaResponseDTO crearTarea(Integer proyectoId, TareaDTO tareaDTO) {
 
-        Proyecto proyecto = proyectoRepository.findById(tareaDTO.getProyectoId())
+        Proyecto proyecto = proyectoRepository.findById(proyectoId)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "Proyecto no encontrada"));
 
+
+       if(tareaDTO.getFechaLimite() == null){
+           throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se ha ingresado Fecha límite");
+       }
+
+       if(tareaDTO.getFechaLimite().before(new Date())){
+           throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"La fecha límite no puede ser anterior a la fecha de creación.");
+       }
+
+        // Obtener el número más alto de tarea en este proyecto
+        Integer ultimoNumero = tareaRepository.findMaxNumeroTareaByProyectoId(proyectoId);
+        int nuevoNumero = (ultimoNumero == null) ? 1 : ultimoNumero + 1;
+
+
+        Tarea tarea = Tarea.builder()
+                .numeroTarea(nuevoNumero)
+                .nombre(tareaDTO.getNombre())
+                .descripcion(tareaDTO.getDescripcion())
+                .prioridad(tareaDTO.getPrioridad())
+                .fechaCreacion(new Date())
+                .fechaLimite(tareaDTO.getFechaLimite())
+                .estado(true)
+                .proyecto(proyecto)
+                .build();
+/*
         Tarea tarea = new Tarea();
         tarea.setNombre(tareaDTO.getNombre());
         tarea.setDescripcion(tareaDTO.getDescripcion());
@@ -39,6 +66,7 @@ public class TareaServiceImpl implements TareaService {
         tarea.setFechaLimite(tareaDTO.getFechaLimite());
         tarea.setEstado(true);
         tarea.setProyecto(proyecto);
+*/
 
         Tarea tareaNueva = tareaRepository.save(tarea);
 
@@ -46,15 +74,15 @@ public class TareaServiceImpl implements TareaService {
     }
 
     @Override // Obtener tarea por id
-    public TareaResponseDTO getTareaById(Integer Id) {
+    public TareaResponseDTO getTareaById(Integer proyectoId, Integer tareaId) {
 
-        Tarea tareaEncontrada = tareaRepository.findById(Id)
+        Tarea tareaEncontrada = tareaRepository.findByIdAndProyectoId(tareaId, proyectoId)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Tarea no encontrada"));
 
         return mapToTareaResponseDTO(tareaEncontrada);
     }
 
-    @Override //Lista de tareas generales
+    @Override //Lista de tareas de un proyecto
     public List<TareaResponseDTO> getTareasByProyectoId(Integer proyectoId) {
         List<Tarea> tareas = tareaRepository.findByProyectoId(proyectoId);
         return tareas.stream()
@@ -74,14 +102,15 @@ public class TareaServiceImpl implements TareaService {
     }
 
     @Override // Actualizar Tarea
-    public TareaResponseDTO actualizarTarea(Integer id, TareaDTO tareaDTO) {
+    public TareaResponseDTO actualizarTarea(Integer proyectoId, Integer tareaId, TareaDTO tareaDTO) {
 
-        Tarea tarea = tareaRepository.findById(id)
+        //Tarea tarea = tareaRepository.findById(tareaId)
+        Tarea tarea = tareaRepository.findByIdAndProyectoId(tareaId, proyectoId)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Tarea no encontrada"));
 
         tarea.setNombre(tareaDTO.getNombre());
         tarea.setDescripcion(tareaDTO.getDescripcion());
-        tarea.setEstado(tareaDTO.getEstado());
+        //tarea.setEstado(tareaDTO.getEstado());
         //tarea.setFechaCreacion(tareaDTO.getFechaCreacion());
         tarea.setFechaLimite(tareaDTO.getFechaLimite());
         tarea.setPrioridad(tareaDTO.getPrioridad());
@@ -93,9 +122,10 @@ public class TareaServiceImpl implements TareaService {
     }
 
     @Override //Eliminar tarea
-    public void eliminarTarea(Integer id) {
+    public void eliminarTarea(Integer proyectoId, Integer tareaId) {
 
-        Tarea tareaEncontrada = tareaRepository.findById(id)
+        //Tarea tareaEncontrada = tareaRepository.findById(tareaId)
+        Tarea tareaEncontrada = tareaRepository.findByIdAndProyectoId(tareaId, proyectoId)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Tarea no encontrada"));
 
         tareaEncontrada.setEstado(false);
@@ -107,6 +137,7 @@ public class TareaServiceImpl implements TareaService {
     private TareaResponseDTO mapToTareaResponseDTO(Tarea tarea){
         return TareaResponseDTO.builder()
                 .id(tarea.getId())
+                .numeroTarea(tarea.getNumeroTarea())
                 .nombre(tarea.getNombre())
                 .descripcion(tarea.getDescripcion())
                 .prioridad(tarea.getPrioridad())
@@ -118,9 +149,54 @@ public class TareaServiceImpl implements TareaService {
 
     }
 
-    // en vez de tareaRepository.findById(id)
+    // No se usa, pero sería bueno en vez de tareaRepository.findById(id)
     private Tarea obtenerTareaPorId(Integer id) {
         return tareaRepository.findById(id)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Tarea no encontrada"));
     }
+
+
+
+    @Override // Obtener tarea por numeroTarea Opt1
+    public TareaResponseDTO getTareaByNumeroTarea(Integer proyectoId, Integer numeroTarea) {
+        Tarea tareaEncontrada = tareaRepository.findByProyectoIdAndNumeroTarea(proyectoId, numeroTarea)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Tarea no encontrada"));
+
+        return mapToTareaResponseDTO(tareaEncontrada);
+    }
+
+    @Override // Actualizar Tarea por numero Tarea Opt1
+    public TareaResponseDTO actualizarTareaPorNumeroTarea(Integer proyectoId, Integer numeroTarea, TareaDTO tareaDTO) {
+
+        Tarea tarea = tareaRepository.findByProyectoIdAndNumeroTarea(proyectoId, numeroTarea)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Tarea no encontrada"));
+
+        tarea.setNombre(tareaDTO.getNombre());
+        tarea.setDescripcion(tareaDTO.getDescripcion());
+        //tarea.setEstado(tareaDTO.getEstado());
+        //tarea.setFechaCreacion(tareaDTO.getFechaCreacion());
+        tarea.setFechaLimite(tareaDTO.getFechaLimite());
+        tarea.setPrioridad(tareaDTO.getPrioridad());
+        //no tendrías porque actualizar el proyecto del que viene
+        Tarea tareaActualizada = tareaRepository.save(tarea);
+        return mapToTareaResponseDTO(tareaActualizada);
+    }
+
+    @Override //Eliminar tarea por numero Tarea Opt1
+    public void eliminarTareaPorNumeroTarea(Integer proyectoId, Integer numeroTarea) {
+
+        Tarea tareaEncontrada = tareaRepository.findByProyectoIdAndNumeroTarea(proyectoId, numeroTarea)
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Tarea no encontrada"));
+
+        tareaEncontrada.setEstado(false);
+        tareaRepository.save(tareaEncontrada);
+    }
+
+
+
+
+
+
+
+
 }

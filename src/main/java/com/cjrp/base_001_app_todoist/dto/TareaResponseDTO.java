@@ -16,6 +16,7 @@ import java.util.Date;
 public class TareaResponseDTO {
 
     private Integer id;
+    private Integer numeroTarea;
     private String nombre;
     private String descripcion;
     private Priority prioridad;

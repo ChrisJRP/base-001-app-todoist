@@ -85,7 +85,7 @@ public class ProyectoServiceImpl implements ProyectoService {
 
         proyectoEncontrado.setNombre(proyectoDTO.getNombre());
         proyectoEncontrado.setColor(proyectoDTO.getColor());
-        proyectoEncontrado.setEstado(proyectoDTO.getEstado());
+        proyectoEncontrado.setEstado(proyectoDTO.getEstado()); //Esto puede omitirse
        // proyecto.setUsuario(usuario);
 
         Proyecto proyectoActualizado = proyectoRepository.save(proyectoEncontrado);
@@ -109,9 +109,10 @@ public class ProyectoServiceImpl implements ProyectoService {
                 .color(proyecto.getColor())
                 .estado(proyecto.getEstado())
                 .usuarioId(proyecto.getUsuario().getId())
-                .tareas(tareaRepository.findByProyectoId(proyecto.getId()).stream()
-                        .map(this::mapToTareaResponseDTO)
-                        .collect(Collectors.toList()))
+                //Opt_1. Eliminado para pruebas sin lista tareas
+//                .tareas(tareaRepository.findByProyectoId(proyecto.getId()).stream()
+//                        .map(this::mapToTareaResponseDTO)
+//                        .collect(Collectors.toList()))
                 .build();
     }
 
